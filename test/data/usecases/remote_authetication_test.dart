@@ -3,7 +3,9 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:for_dev/domain/use_cases/authentication.dart';
+import 'package:for_dev/domain/helpers/domain_error.dart';
 
+import 'package:for_dev/data/http/http_error.dart';
 import 'package:for_dev/data/usecases/remote_authentication.dart';
 import 'package:for_dev/data/http/http_client.dart';
 
@@ -19,5 +21,16 @@ main() {
     await sut.auth(params);
 
     verify(httpClient.request(url: url, method: 'post', body: {'email': params.email, 'password': params.secret}));
+  });
+
+  test('Should Throws an error when HttpClient returns 400', () async {
+    final params = AuthenticationParams(email: faker.internet.email(), secret: faker.internet.password());
+    final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
+
+    when(httpClient.request(url: url, method: 'post', body: anyBody)).thenThrow(HttpError.badRequest);
+
+    final future = sut.auth(params);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
