@@ -17,9 +17,22 @@ main() {
   final sut = RemoteAuthetication(httpClient: httpClient, url: url);
   final params = AuthenticationParams(email: faker.internet.email(), secret: faker.internet.password());
 
-  test('Should Call HTTP Client with the correct Values', () async {
-    final body = RemoteAutheticationParams.fromDomain(params).toJson();
+  final body = RemoteAutheticationParams.fromDomain(params).toJson();
 
+  Map mockValidData() => {'accessToken': faker.guid.guid(), 'name': faker.person.name()};
+  PostExpectation mockRequest() => when(httpClient.request(url: url, method: 'post', body: body));
+
+  void mockHttpData(Map data) {
+    mockRequest().thenAnswer((_) => data);
+  }
+
+  void mockHttpError(HttpError error) {
+    mockRequest().thenThrow(error);
+  }
+
+  mockHttpData(mockValidData());
+
+  test('Should Call HTTP Client with the correct Values', () async {
     when(httpClient.request(url: url, method: 'post', body: body))
         .thenAnswer((_) async => {'accessToken': faker.guid.guid(), 'name': faker.person.name()});
 
@@ -31,7 +44,7 @@ main() {
   test('Should Throws an error when HttpClient returns 400', () async {
     final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
 
-    when(httpClient.request(url: url, method: 'post', body: anyBody)).thenThrow(HttpError.badRequest);
+    mockHttpError(HttpError.badRequest);
 
     final future = sut.auth(params);
 
@@ -41,7 +54,7 @@ main() {
   test('Should Throws an error when HttpClient returns 404', () async {
     final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
 
-    when(httpClient.request(url: url, method: 'post', body: anyBody)).thenThrow(HttpError.notFound);
+    mockHttpError(HttpError.notFound);
 
     final future = sut.auth(params);
 
@@ -51,7 +64,7 @@ main() {
   test('Should Throws an error when HttpClient returns 500', () async {
     final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
 
-    when(httpClient.request(url: url, method: 'post', body: anyBody)).thenThrow(HttpError.serverError);
+    mockHttpError(HttpError.serverError);
 
     final future = sut.auth(params);
 
@@ -61,7 +74,7 @@ main() {
   test('Should Throws InvalidCredentailsError when HttpClient returns 401', () async {
     final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
 
-    when(httpClient.request(url: url, method: 'post', body: anyBody)).thenThrow(HttpError.unauthorized);
+    mockHttpError(HttpError.unauthorized);
 
     final future = sut.auth(params);
 
