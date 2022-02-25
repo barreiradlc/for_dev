@@ -43,4 +43,14 @@ main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
+
+  test('Should Throws an error when HttpClient returns 500', () async {
+    final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
+
+    when(httpClient.request(url: url, method: 'post', body: anyBody)).thenThrow(HttpError.serverError);
+
+    final future = sut.auth(params);
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
 }
