@@ -53,4 +53,14 @@ main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
+
+  test('Should Throws InvalidCredentailsError when HttpClient returns 401', () async {
+    final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
+
+    when(httpClient.request(url: url, method: 'post', body: anyBody)).thenThrow(HttpError.unauthorized);
+
+    final future = sut.auth(params);
+
+    expect(future, throwsA(DomainError.invalidCredentials));
+  });
 }
