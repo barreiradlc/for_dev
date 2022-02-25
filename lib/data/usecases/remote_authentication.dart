@@ -1,6 +1,7 @@
 import 'package:for_dev/data/http/http_client.dart';
 import 'package:for_dev/data/http/http_error.dart';
 
+import 'package:for_dev/domain/entities/account_entity.dart';
 import 'package:for_dev/domain/helpers/domain_error.dart';
 import 'package:for_dev/domain/use_cases/authentication.dart';
 
@@ -10,11 +11,14 @@ class RemoteAuthetication {
 
   RemoteAuthetication({required this.httpClient, required this.url});
 
-  Future<void> auth(AuthenticationParams params) async {
+  Future<AccountEntity> auth(AuthenticationParams params) async {
     final body = RemoteAutheticationParams.fromDomain(params).toJson();
     try {
-      await httpClient.request(url: url, method: 'post', body: body);
+      // TODO, extrair lógica de retorno de Map vazio
+      final response = await httpClient.request(url: url, method: 'post', body: body) ?? {};
+      return AccountEntity.fromJson(response);
     } on HttpError catch (error) {
+      print(error);
       throw error == HttpError.unauthorized ? DomainError.invalidCredentials : DomainError.unexpected;
     }
   }

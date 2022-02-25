@@ -18,7 +18,11 @@ main() {
   final params = AuthenticationParams(email: faker.internet.email(), secret: faker.internet.password());
 
   test('Should Call HTTP Client with the correct Values', () async {
-    final params = AuthenticationParams(email: faker.internet.email(), secret: faker.internet.password());
+    final body = RemoteAutheticationParams.fromDomain(params).toJson();
+
+    when(httpClient.request(url: url, method: 'post', body: body))
+        .thenAnswer((_) async => {'accessToken': faker.guid.guid(), 'name': faker.person.name()});
+
     await sut.auth(params);
 
     verify(httpClient.request(url: url, method: 'post', body: {'email': params.email, 'password': params.secret}));
@@ -62,5 +66,16 @@ main() {
     final future = sut.auth(params);
 
     expect(future, throwsA(DomainError.invalidCredentials));
+  });
+  test('Should return an Account when HttpClient returns 200', () async {
+    final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
+    final acessToken = faker.guid.guid();
+
+    when(httpClient.request(url: url, method: 'post', body: anyBody))
+        .thenAnswer((_) async => {'accessToken': acessToken, 'name': faker.person.name()});
+
+    final account = await sut.auth(params);
+
+    expect(account.token, acessToken);
   });
 }
