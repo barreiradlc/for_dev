@@ -42,8 +42,6 @@ main() {
   });
 
   test('Should Throws an error when HttpClient returns 400', () async {
-    final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
-
     mockHttpError(HttpError.badRequest);
 
     final future = sut.auth(params);
@@ -52,8 +50,6 @@ main() {
   });
 
   test('Should Throws an error when HttpClient returns 404', () async {
-    final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
-
     mockHttpError(HttpError.notFound);
 
     final future = sut.auth(params);
@@ -62,8 +58,6 @@ main() {
   });
 
   test('Should Throws an error when HttpClient returns 500', () async {
-    final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
-
     mockHttpError(HttpError.serverError);
 
     final future = sut.auth(params);
@@ -72,8 +66,6 @@ main() {
   });
 
   test('Should Throws InvalidCredentailsError when HttpClient returns 401', () async {
-    final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
-
     mockHttpError(HttpError.unauthorized);
 
     final future = sut.auth(params);
