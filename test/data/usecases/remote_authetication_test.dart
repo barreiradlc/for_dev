@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:for_dev/domain/use_cases/authentication.dart';
@@ -20,7 +20,7 @@ main() {
   final body = RemoteAutheticationParams.fromDomain(params).toJson();
 
   Map mockValidData() => {'accessToken': faker.guid.guid(), 'name': faker.person.name()};
-  PostExpectation mockRequest() => when(httpClient.request(url: url, method: 'post', body: body));
+  When mockRequest() => when(() => httpClient.request(url: url, method: 'post', body: body));
 
   void mockHttpData(Map data) {
     mockRequest().thenAnswer((_) => data);
@@ -33,12 +33,12 @@ main() {
   mockHttpData(mockValidData());
 
   test('Should Call HTTP Client with the correct Values', () async {
-    when(httpClient.request(url: url, method: 'post', body: body))
+    when(() => httpClient.request(url: url, method: 'post', body: body))
         .thenAnswer((_) async => {'accessToken': faker.guid.guid(), 'name': faker.person.name()});
 
     await sut.auth(params);
 
-    verify(httpClient.request(url: url, method: 'post', body: {'email': params.email, 'password': params.secret}));
+    verify(() => httpClient.request(url: url, method: 'post', body: {'email': params.email, 'password': params.secret}));
   });
 
   test('Should Throws an error when HttpClient returns 400', () async {
@@ -76,7 +76,7 @@ main() {
     final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
     final acessToken = faker.guid.guid();
 
-    when(httpClient.request(url: url, method: 'post', body: anyBody))
+    when(() => httpClient.request(url: url, method: 'post', body: anyBody))
         .thenAnswer((_) async => {'accessToken': acessToken, 'name': faker.person.name()});
 
     final account = await sut.auth(params);
@@ -86,7 +86,7 @@ main() {
   test('Should ThrounexpedError when HttpClient returns 200 with invalid data', () async {
     final anyBody = RemoteAutheticationParams.fromDomain(params).toJson();
 
-    when(httpClient.request(url: url, method: 'post', body: anyBody)).thenAnswer((_) async => {'invalid_key': 'invalid value'});
+    when(() => httpClient.request(url: url, method: 'post', body: anyBody)).thenAnswer((_) async => {'invalid_key': 'invalid value'});
 
     final future = sut.auth(params);
 
