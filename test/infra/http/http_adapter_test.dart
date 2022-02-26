@@ -25,42 +25,45 @@ class HttpAdapter implements HttpClient {
 class ClientSpy extends Mock implements Client {}
 
 void main() {
+  HttpAdapter sut;
+  ClientSpy client;
+  String url;
+
+  setUp(() {
+    client = ClientSpy();
+    sut = HttpAdapter(client);
+    url = faker.internet.httpUrl();
+  });
   group('post', () {
-    HttpAdapter sut;
-    ClientSpy client;
-    String url;
+    PostExpectation mockRequest() => when(client.post(any, body: anyNamed('body'), headers: anyNamed('headers')));
+
+    void mockResponse(int statusCode, {body = '{"any_key":"any_value"}'}) {
+      mockRequest().thenAnswer((_) async => Response(body, 200));
+    }
 
     setUp(() {
-      client = ClientSpy();
-      sut = HttpAdapter(client);
-      url = faker.internet.httpUrl();
+      mockResponse(200);
     });
     test('Should call the post method with the correct values', () async {
-      when(client.post(any, body: anyNamed('body'), headers: anyNamed('headers'))).thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
-
       await sut.request(url: url, method: 'post', body: {'any_key': 'any_value'});
 
       verify(client.post(url, headers: {'content-type': 'application/json', 'accept': 'application/json'}, body: '{"any_key":"any_value"}'));
     });
 
     test('Should call post without body', () async {
-      when(client.post(any, headers: anyNamed('headers'))).thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
-
       await sut.request(url: url, method: 'post');
 
       verify(client.post(any, headers: anyNamed('headers')));
     });
 
     test('Should return data if the result is 200', () async {
-      when(client.post(any, headers: anyNamed('headers'))).thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
-
       final response = await sut.request(url: url, method: 'post');
 
       expect(response, {'any_key': 'any_value'});
     });
 
     test('Should return null data if the result is 200 without response', () async {
-      when(client.post(any, headers: anyNamed('headers'))).thenAnswer((_) async => Response('', 200));
+      mockResponse(200, body: '');
 
       final response = await sut.request(url: url, method: 'post');
 
