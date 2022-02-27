@@ -98,4 +98,20 @@ void main() {
     }
   );
   
+  testWidgets(
+    'Should present not error if email is valid with blank value', 
+    (WidgetTester tester) async {      
+      await loadPage(tester);
+
+      emailErrorController.add(null);
+      await tester.pump();
+
+
+      expect(
+        find.descendant(of: find.bySemanticsLabel('Email'), matching: find.byType(Text)), 
+        findsOneWidget      
+      );
+    }
+  );
+  
 }
