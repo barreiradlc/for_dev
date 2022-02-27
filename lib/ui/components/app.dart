@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:for_dev/ui/pages/login_page.dart';
+import 'package:for_dev/ui/pages/login/login_page.dart';
+import 'package:for_dev/ui/pages/login/login_presenter.dart';
 
 class App extends StatelessWidget {
+  late LoginPresenter presenter;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {    
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
     final primaryColor = Color.fromRGBO(136, 14, 79, 1);
@@ -48,7 +51,7 @@ class App extends StatelessWidget {
           )
         )
       ),
-      home: LoginPage()
+      home: LoginPage(presenter)
     );
   }
 }
