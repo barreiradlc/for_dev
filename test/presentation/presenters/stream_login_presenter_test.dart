@@ -1,8 +1,9 @@
 import 'dart:async';
-
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
+
+import 'package:for_dev/presentation/protocols/validation.dart';
 
 class LoginState {
   String? emailError;
@@ -21,10 +22,6 @@ class StreamLoginPresenter {
     _state.emailError = validation.validate(field: 'email', value: email);
     _controller.add(_state);
   }
-}
-
-abstract class Validation {
-  String? validate({ required String field, required String value });
 }
 
 class ValidationSpy extends Mock implements Validation {}
