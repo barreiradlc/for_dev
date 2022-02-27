@@ -12,36 +12,49 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    presenter.isLoadingStream.listen((isLoading) {
-      if(isLoading == true) {
-        showDialog(
-          context: context, 
-          barrierDismissible: false,
-          builder: (context) {
-            return SimpleDialog(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 10),
-                    Text('Aguarde', textAlign: TextAlign.center)
-                  ]
-                )
-              ],
-            );
-          }
-        );
-      } else {
-        if(Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
-        }
-      }
-    });
 
     return Scaffold(
       body: Builder(
         builder: (context) {
+          
+          presenter.isLoadingStream.listen((isLoading) {
+            if(isLoading == true) {
+              showDialog(
+                context: context, 
+                barrierDismissible: false,
+                builder: (context) {
+                  return SimpleDialog(
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(height: 10),
+                          Text('Aguarde', textAlign: TextAlign.center)
+                        ]
+                      )
+                    ],
+                  );
+                }
+              );
+            } else {
+              if(Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              }
+            }
+          });
+
+          presenter.mainErrorStream.listen((error) {
+            if(error != null) {
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Colors.red[900],
+                  content: Text(error, textAlign: TextAlign.center)
+                )
+              );
+            }
+          });
+
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
