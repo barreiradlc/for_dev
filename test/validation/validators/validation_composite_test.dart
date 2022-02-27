@@ -11,7 +11,14 @@ class ValidationComposite implements Validation {
   ValidationComposite(this.validations);
 
   String? validate({ required String field, required String value }){
-    return null;
+    String? error;
+    for (final validation in validations) {
+      error = validation.validate(value);
+      if(error?.isNotEmpty == true) {
+        return error;
+      }
+    }
+    return error;
   }
 }
 
@@ -58,4 +65,15 @@ main() {
 
     expect(error, null);
   });
+  
+  test('Should return the first error when have more than one', () {
+    mockFirstValidation('error_1');
+    mockSecondValidation(''); 
+    mockThirdValidation('error_3');
+
+    final error = sut.validate(field: 'any_field', value: 'any_value');
+
+    expect(error, 'error_1');
+  });
+  
 }
