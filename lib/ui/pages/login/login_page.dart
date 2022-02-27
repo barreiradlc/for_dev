@@ -5,6 +5,7 @@ import 'package:for_dev/ui/components/headline1.dart';
 import 'package:for_dev/ui/components/login/login_header.dart';
 import 'package:for_dev/ui/components/spinner_dialog.dart';
 import 'package:for_dev/ui/pages/login/components/email_input.dart';
+import 'package:for_dev/ui/pages/login/components/login_button.dart';
 import 'package:for_dev/ui/pages/login/components/password_input.dart';
 import 'package:for_dev/ui/pages/login/login_presenter.dart';
 import 'package:provider/provider.dart';
@@ -65,15 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                             padding: const EdgeInsets.only(top : 8, bottom: 32),
                             child: PasswordInput(),
                           ),
-                          StreamBuilder<bool?>(
-                            stream: widget.presenter.isFormValidStream,
-                            builder: (context, snapshot) {
-                              return RaisedButton( 
-                                onPressed: snapshot.data != true ? null : widget.presenter.auth, 
-                                child: Text('Entrar')
-                              );
-                            }
-                          ),
+                          LoginButton(),
                           FlatButton.icon(
                             onPressed: () {}, 
                             icon: Icon(Icons.person), 
@@ -92,5 +85,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
-
