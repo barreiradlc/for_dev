@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:faker/faker.dart';
-import 'package:for_dev/domain/helpers/domain_error.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:for_dev/domain/helpers/domain_error.dart';
 import 'package:for_dev/domain/entities/account_entity.dart';
 import 'package:for_dev/domain/use_cases/authentication.dart';
 
@@ -152,6 +152,17 @@ void main() {
 
     expectLater(sut.isLoadingStream, emits(false));
     sut.mainErrorStream.listen(expectAsync1((error) => expect(error, DomainError.invalidCredentials.description)));
+
+    await sut.auth();
+  });
+  
+  test('Should emit correct events on Unexpected error', () async {
+    mockAuthenticationError(DomainError.unexpected);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingStream, emits(false));
+    sut.mainErrorStream.listen(expectAsync1((error) => expect(error, DomainError.unexpected.description)));
 
     await sut.auth();
   });

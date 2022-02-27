@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:for_dev/domain/helpers/domain_error.dart';
