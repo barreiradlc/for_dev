@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+
 import 'package:for_dev/ui/components/error_snackbar.dart';
 import 'package:for_dev/ui/components/headline1.dart';
 import 'package:for_dev/ui/components/login/login_header.dart';
 import 'package:for_dev/ui/components/spinner_dialog.dart';
+import 'package:for_dev/ui/pages/login/components/email_input.dart';
+import 'package:for_dev/ui/pages/login/components/password_input.dart';
 import 'package:for_dev/ui/pages/login/login_presenter.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPresenter presenter;
@@ -50,57 +54,35 @@ class _LoginPageState extends State<LoginPage> {
                 Headline1(text: 'Login'), 
                 Padding(
                   padding: const EdgeInsets.all(32),
-                  child: Form(child: 
-                    Column(
-                      children: [
-                        StreamBuilder<String?>(
-                          stream: widget.presenter.emailErrorStream,
-                          builder: (context, snapshot) {
-                            return TextFormField(
-                              decoration: InputDecoration(
-                                labelText: "Email",
-                                icon: Icon(Icons.email, color: theme.primaryColorLight),
-                                errorText: snapshot.data?.isEmpty == true ? null : snapshot.data
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                              onChanged: widget.presenter.validateEmail,
-                            );
-                          }
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top : 8, bottom: 32),
-                          child: StreamBuilder<String?>(
-                            stream: widget.presenter.passwordErrorStream,
+                  child: 
+                    ListenableProvider(
+                      create: (_) => widget.presenter,
+                      child: Form(
+                        child: Column(
+                        children: [
+                          EmailInput(),
+                          Padding(
+                            padding: const EdgeInsets.only(top : 8, bottom: 32),
+                            child: PasswordInput(),
+                          ),
+                          StreamBuilder<bool?>(
+                            stream: widget.presenter.isFormValidStream,
                             builder: (context, snapshot) {
-                              return TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: "Senha",
-                                  icon: Icon(Icons.lock, color: theme.primaryColorLight),
-                                  errorText: snapshot.data?.isEmpty == true ? null : snapshot.data                              
-                                ),
-                                obscureText: true,
-                                onChanged: widget.presenter.validatePassword,
+                              return RaisedButton( 
+                                onPressed: snapshot.data != true ? null : widget.presenter.auth, 
+                                child: Text('Entrar')
                               );
                             }
                           ),
-                        ),
-                        StreamBuilder<bool?>(
-                          stream: widget.presenter.isFormValidStream,
-                          builder: (context, snapshot) {
-                            return RaisedButton( 
-                              onPressed: snapshot.data != true ? null : widget.presenter.auth, 
-                              child: Text('Entrar')
-                            );
-                          }
-                        ),
-                        FlatButton.icon(
-                          onPressed: () {}, 
-                          icon: Icon(Icons.person), 
-                          label: Text('Criar conta')
-                        )
-                      ]
-                    )
-                  ),
+                          FlatButton.icon(
+                            onPressed: () {}, 
+                            icon: Icon(Icons.person), 
+                            label: Text('Criar conta')
+                          )
+                        ]
+                      )
+                      ),
+                    ),
                 )
               ],
             ),
@@ -110,3 +92,5 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
+
