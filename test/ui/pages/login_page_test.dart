@@ -38,8 +38,7 @@ void main() {
     isLoadingController.close();
   });
 
-  testWidgets(
-    'Should Load with correct initial state', 
+  testWidgets('Should Load with correct initial state', 
     (WidgetTester tester) async {
       await loadPage(tester);  
 
@@ -61,12 +60,12 @@ void main() {
 
       final sendButton = tester.widget<RaisedButton>(find.byType(RaisedButton));
       expect(sendButton.onPressed, null);
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
     }
   );
 
-
-  testWidgets(
-    'Should call validate with correct values', 
+  testWidgets('Should call validate with correct values', 
     (WidgetTester tester) async {      
       await loadPage(tester);
 
@@ -82,8 +81,7 @@ void main() {
     }
   );
   
-  testWidgets(
-    'Should present error if email is invalid', 
+  testWidgets('Should present error if email is invalid', 
     (WidgetTester tester) async {      
       await loadPage(tester);
 
@@ -94,8 +92,7 @@ void main() {
     }
   );
 
-  testWidgets(
-    'Should present not error if email is valid', 
+  testWidgets('Should present not error if email is valid', 
     (WidgetTester tester) async {      
       await loadPage(tester);
 
@@ -110,8 +107,7 @@ void main() {
     }
   );
   
-  testWidgets(
-    'Should present not error if email is valid with blank value', 
+  testWidgets('Should present not error if email is valid with blank value', 
     (WidgetTester tester) async {      
       await loadPage(tester);
 
@@ -125,9 +121,7 @@ void main() {
     }
   );
   
-  // PASSWORD
-  testWidgets(
-    'Should present error if password is invalid', 
+  testWidgets('Should present error if password is invalid', 
     (WidgetTester tester) async {      
       await loadPage(tester);
 
@@ -138,8 +132,7 @@ void main() {
     }
   );
 
-  testWidgets(
-    'Should present not error if password is valid', 
+  testWidgets('Should present not error if password is valid', 
     (WidgetTester tester) async {      
       await loadPage(tester);
 
@@ -154,8 +147,7 @@ void main() {
     }
   );
   
-  testWidgets(
-    'Should present not error if password is valid with blank value', 
+  testWidgets('Should present not error if password is valid with blank value', 
     (WidgetTester tester) async {      
       await loadPage(tester);
 
@@ -168,8 +160,8 @@ void main() {
       );
     }
   );
-  testWidgets(
-    'Should enable form button if form is valid', 
+  
+  testWidgets('Should enable form button if form is valid', 
     (WidgetTester tester) async { 
       await loadPage(tester);
 
@@ -180,8 +172,8 @@ void main() {
       expect(sendButton.onPressed, isNotNull);
     }
   );
-  testWidgets(
-    'Should disable form button if form is invalid', 
+  
+  testWidgets('Should disable form button if form is invalid', 
     (WidgetTester tester) async { 
       await loadPage(tester);
 
@@ -193,8 +185,7 @@ void main() {
     }
   );
   
-  testWidgets(
-    'Should call authentication on form submit', 
+  testWidgets('Should call authentication on form submit', 
     (WidgetTester tester) async { 
       await loadPage(tester);
 
@@ -207,8 +198,7 @@ void main() {
     }
   );
   
-  testWidgets(
-    'Should present loading', 
+  testWidgets('Should present loading', 
     (WidgetTester tester) async { 
 
       await loadPage(tester);
@@ -219,5 +209,19 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     }
   );
+
+  testWidgets('Should hide loading', 
+    (WidgetTester tester) async { 
+
+      await loadPage(tester);
+
+      isLoadingController.add(true);
+      await tester.pump();      
+      isLoadingController.add(false);
+      await tester.pump();      
   
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+    }
+  );
+
 }
