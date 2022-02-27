@@ -3,26 +3,8 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:for_dev/presentation/presenters/stream_login_presenter.dart';
 import 'package:for_dev/presentation/protocols/validation.dart';
-
-class LoginState {
-  String? emailError;
-}
-class StreamLoginPresenter {
-  final Validation validation;
-  final _controller = StreamController<LoginState>.broadcast();
-
-  LoginState _state = LoginState();
-
-  Stream<String?> get emailErrorStream => _controller.stream.map((state) => state.emailError);
-
-  StreamLoginPresenter({ required this.validation });
-
-  void validateEmail(String email){
-    _state.emailError = validation.validate(field: 'email', value: email);
-    _controller.add(_state);
-  }
-}
 
 class ValidationSpy extends Mock implements Validation {}
 
