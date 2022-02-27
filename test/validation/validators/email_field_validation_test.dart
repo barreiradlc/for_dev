@@ -8,7 +8,11 @@ class EmailFieldValidation implements FieldValidation {
   EmailFieldValidation(this.field);
 
   String? validate(String? value){
-    return null;
+    final regex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+    if(value?.isNotEmpty != true || regex.hasMatch(value!)){
+      return null;
+    }
+    return 'Campo inválido';
   }
 }
 
@@ -35,6 +39,12 @@ main() {
     final error = sut.validate('barreira266@hotmail.com');
 
     expect(error, null);
+  });
+  
+  test('Should return error if email is invalid', () {
+    final error = sut.validate('barreira266@hotmail');
+
+    expect(error, 'Campo inválido');
   });
 
 }
