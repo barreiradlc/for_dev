@@ -176,5 +176,17 @@ void main() {
       expect(sendButton.onPressed, isNotNull);
     }
   );
+  testWidgets(
+    'Should disable form button if form is invalid', 
+    (WidgetTester tester) async { 
+      await loadPage(tester);
+
+      isFormValidController.add(false);
+      await tester.pump();
+  
+      final sendButton = tester.widget<RaisedButton>(find.byType(RaisedButton));
+      expect(sendButton.onPressed, null);
+    }
+  );
   
 }
