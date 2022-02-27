@@ -12,7 +12,7 @@ class ValidationComposite implements Validation {
 
   String? validate({ required String field, required String value }){
     String? error;
-    for (final validation in validations) {
+    for (final validation in validations.where((currentValidation) => currentValidation.field == field)) {
       error = validation.validate(value);
       if(error?.isNotEmpty == true) {
         return error;
@@ -47,7 +47,7 @@ main() {
     secondValidation = FieldValidationSpy();
     thirdValidation = FieldValidationSpy();
 
-    when(() => firstValidation.field).thenReturn('any_field');
+    when(() => firstValidation.field).thenReturn('other_field');
     when(() => secondValidation.field).thenReturn('any_field');
     when(() => thirdValidation.field).thenReturn('other_field');
     
@@ -68,12 +68,22 @@ main() {
   
   test('Should return the first error when have more than one', () {
     mockFirstValidation('error_1');
-    mockSecondValidation(''); 
+    mockSecondValidation('error_2'); 
+    mockThirdValidation('error_3');
+
+    final error = sut.validate(field: 'other_field', value: 'any_value');
+
+    expect(error, 'error_1');
+  });
+  
+  test('Should return the first error when have more than one, not considering the oyher fields', () {
+    mockFirstValidation('error_1');
+    mockSecondValidation('error_2'); 
     mockThirdValidation('error_3');
 
     final error = sut.validate(field: 'any_field', value: 'any_value');
 
-    expect(error, 'error_1');
+    expect(error, 'error_2');
   });
   
 }
