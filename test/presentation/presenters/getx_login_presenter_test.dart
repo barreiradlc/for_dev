@@ -1,4 +1,4 @@
-import 'dart:async';
+
 import 'package:faker/faker.dart';
 import 'package:for_dev/presentation/presenters/getx_login_presenter.dart';
 import 'package:mocktail/mocktail.dart';
@@ -8,7 +8,6 @@ import 'package:for_dev/domain/helpers/domain_error.dart';
 import 'package:for_dev/domain/entities/account_entity.dart';
 import 'package:for_dev/domain/use_cases/authentication.dart';
 
-import 'package:for_dev/presentation/presenters/stream_login_presenter.dart';
 import 'package:for_dev/presentation/protocols/validation.dart';
 
 class ValidationSpy extends Mock implements Validation {}
