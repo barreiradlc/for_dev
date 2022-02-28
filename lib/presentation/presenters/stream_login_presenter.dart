@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:for_dev/domain/helpers/domain_error.dart';
 import 'package:for_dev/domain/use_cases/authentication.dart';
 import 'package:for_dev/presentation/protocols/validation.dart';
+import 'package:for_dev/ui/pages/login/login_presenter.dart';
 
 class LoginState {
   String? mainError;
@@ -16,7 +18,7 @@ class LoginState {
   bool get isFormValid => passwordError == null && emailError == null && email != null && password != null;
 }
 
-class StreamLoginPresenter {
+class StreamLoginPresenter implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
   StreamController<LoginState>? _controller = StreamController<LoginState>.broadcast();
@@ -62,5 +64,15 @@ class StreamLoginPresenter {
   void dispose() {
     _controller?.close();
     _controller = null;
+  }
+
+  @override
+  void addListener(VoidCallback listener) {
+    // TODO: implement addListener
+  }
+
+  @override
+  void removeListener(VoidCallback listener) {
+    // TODO: implement removeListener
   }
 }

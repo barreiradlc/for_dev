@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          widget.presenter.isLoadingStream.listen((isLoading) {
+          widget.presenter.isLoadingStream?.listen((isLoading) {
             if(isLoading == true) {
               showLoadingSpinner(context);
             } else {
@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
             }
           });
 
-          widget.presenter.mainErrorStream.listen((error) {
+          widget.presenter.mainErrorStream?.listen((error) {
             if(error != null) {
               showErrorSnackBar(context, error);
             }

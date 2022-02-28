@@ -8,7 +8,6 @@ class LoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
     LoginPresenter presenter = Provider.of<LoginPresenter>(context);
 
     return StreamBuilder<bool?>(
