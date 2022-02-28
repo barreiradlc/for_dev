@@ -8,39 +8,29 @@ import 'package:for_dev/ui/pages/login/components/email_input.dart';
 import 'package:for_dev/ui/pages/login/components/login_button.dart';
 import 'package:for_dev/ui/pages/login/components/password_input.dart';
 import 'package:for_dev/ui/pages/login/login_presenter.dart';
+import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   LoginPresenter presenter;
 
   LoginPage(this.presenter);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  void _hideKeyboard() {
-    final currentFocus = FocusScope.of(context);
-    if(!currentFocus.hasPrimaryFocus) {
-      currentFocus.unfocus();
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    widget.presenter.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    void _hideKeyboard() {
+      final currentFocus = FocusScope.of(context);
+      if(!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
+    }
+
     ThemeData theme = Theme.of(context);
 
     return Scaffold(
       body: Builder(
         builder: (context) {
-          widget.presenter.isLoadingStream?.listen((isLoading) {
+          presenter.isLoadingStream?.listen((isLoading) {
             if(isLoading == true) {
               showLoadingSpinner(context);
             } else {
@@ -48,9 +38,15 @@ class _LoginPageState extends State<LoginPage> {
             }
           });
 
-          widget.presenter.mainErrorStream?.listen((error) {
+          presenter.mainErrorStream?.listen((error) {
             if(error != null) {
               showErrorSnackBar(context, error);
+            }
+          });
+          
+          presenter.navigateToStream?.listen((page) {
+            if(page?.isNotEmpty == true) {
+              Get.offAllNamed(page!);
             }
           });
 
@@ -66,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                     padding: const EdgeInsets.all(32),
                     child: 
                       ListenableProvider(
-                        create: (_) => widget.presenter,
+                        create: (_) => presenter,
                         child: Form(
                           child: Column(
                           children: [
