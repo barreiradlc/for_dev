@@ -48,6 +48,14 @@ void main() {
     mockAuthenticationCall().thenThrow(domainError);
   }
 
+  mockSaveCurrectAccountCall() => when(
+    () => saveCurrentAccount.save(AccountEntity(token))
+  );
+
+  void mockSaveCurrectAccountError() {
+    mockSaveCurrectAccountCall().thenThrow(DomainError.unexpected);
+  }
+
   setUp(() {
     validation = ValidationSpy();
     authentication = AuthenticationSpy();
@@ -66,6 +74,7 @@ void main() {
 
   setUpAll((){
     registerFallbackValue(AuthenticationParams);
+    registerFallbackValue(AccountEntity);
   });
   
   test('Should call validation with correct email', (){
@@ -142,6 +151,16 @@ void main() {
   
   test('Should call SaveCurrentAccount with the correct value', () async {
     sut.validateEmail(email);        
+    sut.validatePassword(password);
+
+    await sut.auth();
+
+    verify(() => saveCurrentAccount.save(AccountEntity(token))).called(1);
+  });
+  
+  test('Should throw UnexpectedError if SaveCurrentAccount fails', () async {
+    mockSaveCurrectAccountError();
+    sut.validateEmail(email);
     sut.validatePassword(password);
 
     await sut.auth();
