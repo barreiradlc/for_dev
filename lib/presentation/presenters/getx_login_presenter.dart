@@ -1,15 +1,17 @@
+import 'package:for_dev/domain/entities/account_entity.dart';
+import 'package:get/get.dart';
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:for_dev/domain/helpers/domain_error.dart';
 import 'package:for_dev/domain/use_cases/authentication.dart';
+import 'package:for_dev/domain/use_cases/save_currect_account.dart';
 import 'package:for_dev/presentation/protocols/validation.dart';
 import 'package:for_dev/ui/pages/login/login_presenter.dart';
-import 'package:get/get.dart';
 
 class GetxLoginPresenter extends GetxController implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
+  final SaveCurrentAccount? saveCurrentAccount;
 
   String? _email;
   String? _password;
@@ -26,7 +28,7 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   Stream<bool>? get isFormValidStream => _isFormValid.stream;
   Stream<bool>? get isLoadingStream => _isLoading.stream;
 
-  GetxLoginPresenter({ required this.validation, required this.authentication });
+  GetxLoginPresenter({ required this.validation, required this.authentication, required this.saveCurrentAccount });
 
   void validateEmail(String email){
     _email = email;
@@ -49,7 +51,8 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   Future<void> auth() async {
     _isLoading.value = true;    
     try {
-      await authentication.auth(AuthenticationParams(email: _email!, secret: _password!));
+      final account = await authentication.auth(AuthenticationParams(email: _email!, secret: _password!));
+      await saveCurrentAccount?.save(account as AccountEntity);
     } on DomainError catch (e) {
       _mainError?.value = e.description;
     }

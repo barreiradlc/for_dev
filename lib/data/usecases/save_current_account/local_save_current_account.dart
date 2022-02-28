@@ -3,7 +3,7 @@ import 'package:for_dev/domain/entities/account_entity.dart';
 import 'package:for_dev/domain/helpers/domain_error.dart';
 import 'package:for_dev/domain/use_cases/save_currect_account.dart';
 
-class LocalSaveCurrentAccount implements SaveCurrectAccount {
+class LocalSaveCurrentAccount implements SaveCurrentAccount {
   late SaveSecureCacheStorage saveSecureCacheStorage;
 
   LocalSaveCurrentAccount({ required this.saveSecureCacheStorage });

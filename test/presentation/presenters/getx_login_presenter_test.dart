@@ -1,5 +1,6 @@
 
 import 'package:faker/faker.dart';
+import 'package:for_dev/domain/use_cases/save_currect_account.dart';
 import 'package:for_dev/presentation/presenters/getx_login_presenter.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -12,13 +13,16 @@ import 'package:for_dev/presentation/protocols/validation.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 class AuthenticationSpy extends Mock implements Authentication {}
+class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
 
 void main() {
   late ValidationSpy validation;
   late AuthenticationSpy authentication;
   late GetxLoginPresenter sut;
+  late SaveCurrentAccountSpy saveCurrentAccount;
   late String email;
   late String password;
+  late String token;
 
   mockValidationCall(String? field) =>
     when(() => validation.validate(field: field == null ? any(named: 'field') : field, value: any(named: 'value')));
@@ -37,7 +41,7 @@ void main() {
   );
 
   void mockAuthentication() {
-    mockAuthenticationCall().thenAnswer((_) async => AccountEntity(faker.guid.guid()));
+    mockAuthenticationCall().thenAnswer((_) async => AccountEntity(token));
   }
   
   void mockAuthenticationError(DomainError domainError) {
@@ -47,9 +51,15 @@ void main() {
   setUp(() {
     validation = ValidationSpy();
     authentication = AuthenticationSpy();
-    sut = GetxLoginPresenter(validation: validation, authentication: authentication);
+    saveCurrentAccount = SaveCurrentAccountSpy();
+    sut = GetxLoginPresenter(
+      validation: validation, 
+      authentication: authentication,
+      saveCurrentAccount: saveCurrentAccount
+    );
     email = faker.internet.email();
     password = faker.internet.password();
+    token = faker.guid.guid();
     mockValidation();
     mockAuthentication();
   });
@@ -129,6 +139,16 @@ void main() {
   //   await Future.delayed(Duration.zero);
   //   sut.validatePassword(password);
   // });
+  
+  test('Should call SaveCurrentAccount with the correct value', () async {
+    sut.validateEmail(email);        
+    sut.validatePassword(password);
+
+    await sut.auth();
+
+    verify(() => saveCurrentAccount.save(AccountEntity(token))).called(1);
+  });
+  
   
   test('Should call Authetication with the correct values', () async {
     sut.validateEmail(email);        
