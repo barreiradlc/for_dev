@@ -47,7 +47,7 @@ main() {
     setUp(() {
       mockFetchSecure();
     });
-    
+
     test('Should call fetch secure with correct value', () async {
       await sut.fetchSecure(key);
 
@@ -57,7 +57,7 @@ main() {
     test('Should call correct value on succeess', () async {
       final fetchedValue = await sut.fetchSecure(key);
 
-      verify(() => secureStorage.read(key: key));
+      expect(fetchedValue, value);
     });
 
   });
