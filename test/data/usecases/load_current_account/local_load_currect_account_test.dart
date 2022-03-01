@@ -25,10 +25,17 @@ class FetchSecureCacheStorageSpy extends Mock implements FetchSecureCacheStorage
 main() {
   late FetchSecureCacheStorageSpy fetchSecureCacheStorage;
   late LocalLoadCurrentAccount sut;
+  late String token;
+
+  void mockFetchSecure() {
+    when(() => fetchSecureCacheStorage.fetchSecure('token')).thenAnswer((_) async => token);
+  }
 
   setUp(() {
     fetchSecureCacheStorage = FetchSecureCacheStorageSpy();
     sut = LocalLoadCurrentAccount(fetchSecureCacheStorage: fetchSecureCacheStorage);
+    token = faker.guid.guid();
+    mockFetchSecure();
   });
 
   test('Should call FetchSecureCacheStorage with correct value', () async {
@@ -38,8 +45,6 @@ main() {
   });
   
   test('Should return an AccountEntity ', () async {
-    final token = faker.guid.guid();
-    when(() => fetchSecureCacheStorage.fetchSecure('token')).thenAnswer((_) async => token);
     final account = await sut.load();
 
     expect(account, AccountEntity(token));
