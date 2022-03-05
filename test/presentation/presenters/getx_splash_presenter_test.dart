@@ -1,37 +1,16 @@
+import 'package:test/test.dart';
 import 'package:faker/faker.dart';
+import 'package:mocktail/mocktail.dart';
+
 import 'package:for_dev/domain/entities/account_entity.dart';
 import 'package:for_dev/domain/use_cases/load_currect_account.dart';
-import 'package:get/get.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:test/test.dart';
-
-import 'package:for_dev/ui/pages/splash/splash_presenter.dart';
-
-class GetxSplashPresenter implements SplashPresenter {
-  final LoadCurrentAccount loadCurrentAccount; 
-  var _navigateTo = RxString('');
-
-  Stream<String> get navigateToStream => _navigateTo.stream;
-
-  GetxSplashPresenter({ required this.loadCurrentAccount });
-
-  @override
-  Future<void>? checkAccount() async {
-    try {
-      final account = await loadCurrentAccount.load();
-      _navigateTo.value = account == null ? '/login' : '/surveys';
-    } catch (e) {
-      _navigateTo.value = '/login';
-    }
-  }  
-
-}
+import 'package:for_dev/presentation/presenters/getx_splash_presenter.dart';
 
 class LoadCurrentAccountSpy extends Mock implements LoadCurrentAccount{}
 
 main() {
-    late GetxSplashPresenter sut;
-    late LoadCurrentAccountSpy loadCurrentAccount;
+  late GetxSplashPresenter sut;
+  late LoadCurrentAccountSpy loadCurrentAccount;
 
   When loadCurrentAccountCall() {
     return when(() => loadCurrentAccount.load());
