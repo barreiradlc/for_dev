@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:for_dev/ui/pages/splash/splash_page.dart';
@@ -42,7 +41,7 @@ void main() {
   testWidgets('Should call loadCurrectAccount on page load', (WidgetTester tester) async {
     await loadPage(tester);
 
-    verify(() => presenter.loadCurrentAccount()).called(1);
+    verify(() => presenter.checkAccount()).called(1);
   });
   
   testWidgets('Should change page', (WidgetTester tester) async {
