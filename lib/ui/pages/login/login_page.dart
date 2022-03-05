@@ -45,8 +45,6 @@ class LoginPage extends StatelessWidget {
           });
           
           presenter.navigateToStream?.listen((page) {
-            print('page');
-            print(page);
             if(page?.isNotEmpty == true) {
               Get.offAllNamed(page!);
             }
