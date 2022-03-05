@@ -23,8 +23,8 @@ class SplashPage extends StatelessWidget {
         builder: (context) {
 
           presenter.navigateToStream.listen((page) {
-            if(page.isNotEmpty == true) {
-              Get.offAllNamed(page);
+            if(page?.isNotEmpty == true) {
+              Get.offAllNamed(page!);
             }
           });
 
@@ -38,7 +38,7 @@ class SplashPage extends StatelessWidget {
 }
 
 abstract class SplashPresenter{
-  Stream<String> get navigateToStream;
+  Stream<String?> get navigateToStream;
   Future<void>? loadCurrentAccount();
 }
 
@@ -46,11 +46,11 @@ class SplashPresenterSpy extends Mock implements SplashPresenter{}
 
 void main() {
   late SplashPresenterSpy presenter;
-  late StreamController<String> navigateToController;
+  late StreamController<String?> navigateToController;
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = SplashPresenterSpy();
-    navigateToController = StreamController<String>();
+    navigateToController = StreamController<String?>();
     when(() => presenter.navigateToStream).thenAnswer((_) => navigateToController.stream);
 
     await tester.pumpWidget(
@@ -88,6 +88,18 @@ void main() {
 
     expect(Get.currentRoute, '/any_route');
     expect(find.text('fake page'), findsOneWidget);
+  });
+  
+  testWidgets('Should not change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('');
+    await tester.pump();
+    expect(Get.currentRoute, '/');
+
+    navigateToController.add(null);
+    await tester.pump();
+    expect(Get.currentRoute, '/');    
   });
 
 }
