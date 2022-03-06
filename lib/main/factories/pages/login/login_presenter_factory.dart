@@ -1,5 +1,3 @@
-
-import 'package:for_dev/domain/use_cases/save_currect_account.dart';
 import 'package:for_dev/main/factories/pages/login/login_validation_factory.dart';
 import 'package:for_dev/main/factories/usecases/authentication_factory.dart';
 import 'package:for_dev/main/factories/usecases/save_current_account_factory.dart';
@@ -11,7 +9,7 @@ LoginPresenter makeStremLoginPresenter() {
   return StreamLoginPresenter(
     authentication: makeRemoteAuthentication(),
     validation: makeLoginValidation(),
-  );  
+  );
 }
 
 LoginPresenter makeGetxLoginPresenter() {
@@ -19,5 +17,5 @@ LoginPresenter makeGetxLoginPresenter() {
     authentication: makeRemoteAuthentication(),
     validation: makeLoginValidation(),
     saveCurrentAccount: makeLocalSaveCurrentAccount(),
-  );  
+  );
 }

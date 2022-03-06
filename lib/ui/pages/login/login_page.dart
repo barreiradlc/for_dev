@@ -8,6 +8,7 @@ import 'package:for_dev/ui/pages/login/components/email_input.dart';
 import 'package:for_dev/ui/pages/login/components/login_button.dart';
 import 'package:for_dev/ui/pages/login/components/password_input.dart';
 import 'package:for_dev/ui/pages/login/login_presenter.dart';
+import 'package:for_dev/utils/i18n/resources.dart';
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
@@ -75,7 +76,7 @@ class LoginPage extends StatelessWidget {
                             FlatButton.icon(
                               onPressed: () {}, 
                               icon: Icon(Icons.person), 
-                              label: Text('Criar conta')
+                              label: Text(R.strings.addAccount)
                             )
                           ]
                         )

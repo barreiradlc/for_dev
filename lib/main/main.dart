@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:for_dev/utils/i18n/resources.dart';
 import 'package:get/route_manager.dart';
 
 import 'package:for_dev/ui/components/app_theme.dart';
 
 import 'package:for_dev/main/factories/factories.dart';
 
-void main() {
+void main() {  
   runApp(App());
 }
 
