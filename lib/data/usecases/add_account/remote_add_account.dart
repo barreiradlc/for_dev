@@ -16,7 +16,10 @@ class RemoteAddAccount  {
     try {
       final response = await httpClient.request(url: url, method: 'post', body: body);
       return response;  
-    } on HttpError {
+    } on HttpError catch(e) {
+      if(e == HttpError.forbbiden) {
+        throw DomainError.emailInUse;
+      }
       throw DomainError.unexpected;
     }    
   }
