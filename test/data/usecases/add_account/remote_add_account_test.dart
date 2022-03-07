@@ -7,7 +7,6 @@ import 'package:test/test.dart';
 import 'package:for_dev/domain/helpers/domain_error.dart';
 
 import 'package:for_dev/data/http/http_error.dart';
-import 'package:for_dev/data/usecases/authentication/remote_authentication.dart';
 import 'package:for_dev/data/http/http_client.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
@@ -18,7 +17,12 @@ main() {
   late RemoteAddAccount sut;
   late AddAccountParams params;
 
+  Map mockValidData() => {'accessToken': faker.guid.guid(), 'name': faker.person.name()};
   When mockRequest() => when(() => httpClient.request(url: url, method: 'post', body: any(named: 'body')));
+
+  void mockHttpData(Map data) {
+    mockRequest().thenAnswer((_) => data);
+  }
 
   void mockHttpError(HttpError error) {
     mockRequest().thenThrow(error);
@@ -35,9 +39,16 @@ main() {
       password: faker.internet.password(),
       passwordConfirmation: faker.internet.password()
     );
+    mockHttpData(mockValidData());
   });  
 
-  test('Should Call HTTP Client with the correct Values', () async {    
+  test('Should Call HTTP Client with the correct Values', () async { 
+    final anyBody = RemoteAddAccountParams.fromDomain(params).toJson();
+    final acessToken = faker.guid.guid();
+
+    when(() => httpClient.request(url: url, method: 'post', body: anyBody))
+        .thenAnswer((_) async => {'accessToken': acessToken, 'name': faker.person.name()});
+           
     await sut.add(params);
 
     verify(() => httpClient.request(url: url, method: 'post', body: {
@@ -70,6 +81,18 @@ main() {
     final future = sut.add(params);
 
     expect(future, throwsA(DomainError.emailInUse));
+  });
+  
+  test('Should return and Account if httpClient return 200', () async {    
+    final anyBody = RemoteAddAccountParams.fromDomain(params).toJson();
+    final acessToken = faker.guid.guid();
+
+    when(() => httpClient.request(url: url, method: 'post', body: anyBody))
+        .thenAnswer((_) async => {'accessToken': acessToken, 'name': faker.person.name()});
+
+    final account = await sut.add(params);
+
+    expect(account?.token, acessToken);
   });
   
 }

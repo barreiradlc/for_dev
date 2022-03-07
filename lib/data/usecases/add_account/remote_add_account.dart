@@ -1,11 +1,12 @@
 import 'package:for_dev/data/http/http_client.dart';
 import 'package:for_dev/data/http/http_error.dart';
+import 'package:for_dev/data/models/remote_account_model.dart';
 
 import 'package:for_dev/domain/entities/account_entity.dart';
 import 'package:for_dev/domain/helpers/domain_error.dart';
 import 'package:for_dev/domain/use_cases/add_account.dart';
 
-class RemoteAddAccount  {
+class RemoteAddAccount implements AddAccount {
   final HttpClient httpClient;
   final String url;
 
@@ -15,7 +16,7 @@ class RemoteAddAccount  {
     final body = RemoteAddAccountParams.fromDomain(params).toJson();
     try {
       final response = await httpClient.request(url: url, method: 'post', body: body);
-      return response;  
+      return RemoteAccountModel.fromJson(response).toEntity();  
     } on HttpError catch(e) {
       if(e == HttpError.forbbiden) {
         throw DomainError.emailInUse;
