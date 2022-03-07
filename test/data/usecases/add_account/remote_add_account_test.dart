@@ -48,7 +48,7 @@ main() {
 
     when(() => httpClient.request(url: url, method: 'post', body: anyBody))
         .thenAnswer((_) async => {'accessToken': acessToken, 'name': faker.person.name()});
-           
+
     await sut.add(params);
 
     verify(() => httpClient.request(url: url, method: 'post', body: {
@@ -93,6 +93,17 @@ main() {
     final account = await sut.add(params);
 
     expect(account?.token, acessToken);
+  });
+  
+  
+  test('Should throw unexpectedError if httpClient return 200 with invalid data', () async {    
+    final anyBody = RemoteAddAccountParams.fromDomain(params).toJson();
+
+    when(() => httpClient.request(url: url, method: 'post', body: anyBody)).thenAnswer((_) async => {'invalid_key': 'invalid value'});
+
+    final future = sut.add(params);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
   
 }
