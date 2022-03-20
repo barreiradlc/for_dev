@@ -10,11 +10,15 @@ import 'package:for_dev/ui/pages/signup/components/name_input.dart';
 import 'package:for_dev/ui/pages/signup/components/password_confirmation_input.dart';
 import 'package:for_dev/ui/pages/signup/components/password_input.dart';
 import 'package:for_dev/ui/pages/signup/components/signup_button.dart';
+import 'package:for_dev/ui/pages/signup/signup_presenter.dart';
 import 'package:for_dev/utils/i18n/resources.dart';
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
 class SignUpPage extends StatelessWidget {
+  final SignUpPresenter presenter;
+  
+  SignUpPage(this.presenter);
 
   @override
   Widget build(BuildContext context) {
@@ -42,27 +46,30 @@ class SignUpPage extends StatelessWidget {
                   Headline1(text: R.strings.addAccount), 
                   Padding(
                     padding: const EdgeInsets.all(32),
-                    child: Form(
-                      child: Column(
-                        children: [
-                          NameInput(),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: EmailInput(),
-                          ),
-                          PasswordInput(),
-                          Padding(
-                            padding: const EdgeInsets.only(top : 8, bottom: 32),
-                            child: PasswordConfirmationInput(),
-                          ),
-                          SignUpButton(),
-                          FlatButton.icon(
-                            onPressed: () {}, 
-                            icon: Icon(Icons.person), 
-                            label: Text(R.strings.login)
-                          )
-                        ]
-                      )
+                    child: ListenableProvider(
+                      create: (_) => presenter,
+                      child: Form(
+                        child: Column(
+                          children: [
+                            NameInput(),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: EmailInput(),
+                            ),
+                            PasswordInput(),
+                            Padding(
+                              padding: const EdgeInsets.only(top : 8, bottom: 32),
+                              child: PasswordConfirmationInput(),
+                            ),
+                            SignUpButton(),
+                            FlatButton.icon(
+                              onPressed: () {}, 
+                              icon: Icon(Icons.person), 
+                              label: Text(R.strings.login)
+                            )
+                          ]
+                        )
+                      ),
                     ),
                   )
                 ],
