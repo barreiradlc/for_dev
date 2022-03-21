@@ -15,6 +15,7 @@ class SignUpPresenterSpy extends Mock implements SignUpPresenter {}
 
 void main() {
   late SignUpPresenter presenter;
+  late StreamController<String?> mainErrorController;
   late StreamController<String?> nameErrorController;
   late StreamController<String?> emailErrorController;
   late StreamController<String?> passwordErrorController;
@@ -23,6 +24,7 @@ void main() {
   late StreamController<bool?> isLoadingController;
 
   void initStreams() {
+    mainErrorController = StreamController<String?>();
     nameErrorController = StreamController<String?>();
     emailErrorController = StreamController<String?>();
     passwordErrorController = StreamController<String?>();
@@ -32,6 +34,7 @@ void main() {
   }
 
   void mockStreams() {
+    when(() => presenter.mainErrorStream).thenAnswer((_) => mainErrorController.stream);
     when(() => presenter.nameErrorStream).thenAnswer((_) => nameErrorController.stream);
     when(() => presenter.emailErrorStream).thenAnswer((_) => emailErrorController.stream);
     when(() => presenter.passwordErrorStream).thenAnswer((_) => passwordErrorController.stream);
@@ -293,6 +296,18 @@ void main() {
       await tester.pump();      
   
       expect(find.byType(CircularProgressIndicator), findsNothing);
+    }
+  );
+
+
+  testWidgets('Should present error message if signUp fails', 
+    (WidgetTester tester) async { 
+      await loadPage(tester);
+
+      mainErrorController.add('main error');
+      await tester.pump();            
+  
+      expect(find.text('main error'), findsOneWidget);
     }
   );
 

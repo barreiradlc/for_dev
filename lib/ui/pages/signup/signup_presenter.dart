@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 abstract class SignUpPresenter implements Listenable {
-  Stream<String?>? get emailErrorStream;
+  Stream<String?>? get mainErrorStream;
   Stream<String?>? get nameErrorStream;
+  Stream<String?>? get emailErrorStream;
   Stream<String?>? get passwordErrorStream;  
   Stream<String?>? get passwordConfirmationErrorStream;  
   Stream<bool?>? get isFormValidStream;  
