@@ -34,7 +34,13 @@ class SignUpPage extends StatelessWidget {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          
+          presenter.isLoadingStream?.listen((isLoading) {
+            if(isLoading == true) {
+              showLoadingSpinner(context);
+            } else {
+              hideLoadingSpinner(context);
+            }
+          });
 
           return GestureDetector(
             onTap: _hideKeyboard,
