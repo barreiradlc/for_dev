@@ -248,4 +248,21 @@ void main() {
     }
   );
    
+  
+  testWidgets('Should call signup on form submit', 
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      isFormValidController.add(true);
+      await tester.pump();
+      
+      final button = find.byType(RaisedButton);
+
+      await tester.ensureVisible(button);
+      await tester.tap(button);
+      await tester.pump();
+  
+      verify(() => presenter.signUp()).called(1);
+    }
+  );
 }
