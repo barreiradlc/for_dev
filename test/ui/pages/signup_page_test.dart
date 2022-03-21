@@ -20,6 +20,7 @@ void main() {
   late StreamController<String?> emailErrorController;
   late StreamController<String?> passwordErrorController;
   late StreamController<String?> passwordConfirmationErrorController;
+  late StreamController<String?> navigateToController;
   late StreamController<bool?> isFormValidController;
   late StreamController<bool?> isLoadingController;
 
@@ -29,6 +30,7 @@ void main() {
     emailErrorController = StreamController<String?>();
     passwordErrorController = StreamController<String?>();
     passwordConfirmationErrorController = StreamController<String?>();
+    navigateToController = StreamController<String?>();
     isFormValidController = StreamController<bool?>();
     isLoadingController = StreamController<bool?>();
   }
@@ -39,6 +41,7 @@ void main() {
     when(() => presenter.emailErrorStream).thenAnswer((_) => emailErrorController.stream);
     when(() => presenter.passwordErrorStream).thenAnswer((_) => passwordErrorController.stream);
     when(() => presenter.passwordConfirmationErrorStream).thenAnswer((_) => passwordConfirmationErrorController.stream);
+    when(() => presenter.navigateToStream).thenAnswer((_) => navigateToController.stream);
     when(() => presenter.isFormValidStream).thenAnswer((_) => isFormValidController.stream);
     when(() => presenter.isLoadingStream).thenAnswer((_) => isLoadingController.stream);
   }
@@ -61,6 +64,7 @@ void main() {
       initialRoute: '/signup',
       getPages: [
         GetPage(name: '/signup', page: () => SignUpPage(presenter)),        
+        GetPage(name: '/fake_page', page: () => Scaffold(body: Text('fake page'))),
       ],
     );
     await tester.pumpWidget(page);
@@ -133,7 +137,6 @@ void main() {
       verify(() => presenter.validatePasswordConfirmation(password));
     }
   );
-  
 
   testWidgets('Should present name error', 
     (WidgetTester tester) async {      
@@ -254,7 +257,6 @@ void main() {
       expect(sendButton.onPressed, null);
     }
   );
-   
   
   testWidgets('Should call signup on form submit', 
     (WidgetTester tester) async {
@@ -272,7 +274,6 @@ void main() {
       verify(() => presenter.signUp()).called(1);
     }
   );
-
 
   testWidgets('Should present loading', 
     (WidgetTester tester) async { 
@@ -299,7 +300,6 @@ void main() {
     }
   );
 
-
   testWidgets('Should present error message if signUp fails', 
     (WidgetTester tester) async { 
       await loadPage(tester);
@@ -310,5 +310,29 @@ void main() {
       expect(find.text('main error'), findsOneWidget);
     }
   );
+
+  testWidgets('Should change page', 
+    (WidgetTester tester) async { 
+      await loadPage(tester);
+
+      navigateToController.add('/fake_page');
+      await tester.pumpAndSettle();            
+  
+      expect(Get.currentRoute, '/fake_page');
+      expect(find.text('fake page'), findsOneWidget);
+    }
+  );
+
+  testWidgets('Should not change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('');
+    await tester.pump();
+    expect(Get.currentRoute, '/signup');
+
+    navigateToController.add(null);
+    await tester.pump();
+    expect(Get.currentRoute, '/signup');    
+  });
 
 }

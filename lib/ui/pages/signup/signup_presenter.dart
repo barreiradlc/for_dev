@@ -6,6 +6,7 @@ abstract class SignUpPresenter implements Listenable {
   Stream<String?>? get emailErrorStream;
   Stream<String?>? get passwordErrorStream;  
   Stream<String?>? get passwordConfirmationErrorStream;  
+  Stream<String?>? get navigateToStream;  
   Stream<bool?>? get isFormValidStream;  
   Stream<bool?>? get isLoadingStream;  
 
