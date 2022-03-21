@@ -19,12 +19,14 @@ void main() {
   late StreamController<String?> emailErrorController;
   late StreamController<String?> passwordErrorController;
   late StreamController<String?> passwordConfirmationErrorController;
+  late StreamController<bool?> isFormValidController;
 
   void initStreams() {
     nameErrorController = StreamController<String?>();
     emailErrorController = StreamController<String?>();
     passwordErrorController = StreamController<String?>();
     passwordConfirmationErrorController = StreamController<String?>();
+    isFormValidController = StreamController<bool?>();
   }
 
   void mockStreams() {
@@ -32,6 +34,7 @@ void main() {
     when(() => presenter.emailErrorStream).thenAnswer((_) => emailErrorController.stream);
     when(() => presenter.passwordErrorStream).thenAnswer((_) => passwordErrorController.stream);
     when(() => presenter.passwordConfirmationErrorStream).thenAnswer((_) => passwordConfirmationErrorController.stream);
+    when(() => presenter.isFormValidStream).thenAnswer((_) => isFormValidController.stream);
   }
 
   void closeStreams() {
@@ -39,6 +42,7 @@ void main() {
     emailErrorController.close();
     passwordErrorController.close();
     passwordConfirmationErrorController.close();
+    isFormValidController.close();
   }
 
   Future<void> loadPage(WidgetTester tester) async{    
@@ -219,5 +223,29 @@ void main() {
       );
     }
   );
+
+  testWidgets('Should enable form button if form is valid', 
+    (WidgetTester tester) async { 
+      await loadPage(tester);
+
+      isFormValidController.add(true);
+      await tester.pump();
   
+      final sendButton = tester.widget<RaisedButton>(find.byType(RaisedButton));
+      expect(sendButton.onPressed, isNotNull);
+    }
+  );
+  
+  testWidgets('Should disable form button if form is invalid', 
+    (WidgetTester tester) async { 
+      await loadPage(tester);
+
+      isFormValidController.add(false);
+      await tester.pump();
+  
+      final sendButton = tester.widget<RaisedButton>(find.byType(RaisedButton));
+      expect(sendButton.onPressed, null);
+    }
+  );
+   
 }
